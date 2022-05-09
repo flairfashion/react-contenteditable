@@ -35,7 +35,7 @@ export default class ContentEditable extends React.Component<Props> {
   getEl = () => (this.props.innerRef && typeof this.props.innerRef !== 'function' ? this.props.innerRef : this.el).current;
 
   render() {
-    const { tagName, html, innerRef, ...props } = this.props;
+    const { tagName, html, name, innerRef, ...props } = this.props;
 
     return React.createElement(
       tagName || 'div',
@@ -50,6 +50,7 @@ export default class ContentEditable extends React.Component<Props> {
         onKeyUp: this.props.onKeyUp || this.emitChange,
         onKeyDown: this.props.onKeyDown || this.emitChange,
         contentEditable: !this.props.disabled,
+        'data-name': name,
         dangerouslySetInnerHTML: { __html: html }
       },
       this.props.children);
@@ -104,6 +105,7 @@ export default class ContentEditable extends React.Component<Props> {
       // "Cannot assign to read only property 'target' of object"
       const evt = Object.assign({}, originalEvt, {
         target: {
+          name: el.dataset.name,
           value: html
         }
       });
@@ -114,6 +116,7 @@ export default class ContentEditable extends React.Component<Props> {
 
   static propTypes = {
     html: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
     onChange: PropTypes.func,
     disabled: PropTypes.bool,
     tagName: PropTypes.string,
@@ -132,6 +135,7 @@ type DivProps = Modify<JSX.IntrinsicElements["div"], { onChange: ((event: Conten
 
 export interface Props extends DivProps {
   html: string,
+  name: string,
   disabled?: boolean,
   tagName?: string,
   className?: string,
